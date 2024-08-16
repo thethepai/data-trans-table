@@ -1,13 +1,13 @@
 import json
 import re
 import os
-import sys
+from html_md import html_table_to_md
 from typing import Dict, List
 from markdownify import markdownify as md
 from rapidocr_onnxruntime import RapidOCR
 from rapid_table import RapidTable
 
-table_engine = RapidTable()
+table_engine = RapidTable(model_path='./model/ch_ppstructure_mobile_v2_SLANet.onnx')
 ocr_engine = RapidOCR()
 
 def read_markdown_file(file_path: str) -> str:
@@ -25,6 +25,7 @@ def read_json_file(file_path: str) -> List[Dict]:
 def perform_ocr(img_path: str) -> str:
     ocr_result, _ = ocr_engine(img_path)
     table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)
+    print(table_html_str)
     return md(table_html_str)
 
 def replace_image_with_ocr_content(markdown_content: str, image_path: str, ocr_content: str) -> str:
@@ -89,7 +90,6 @@ def main(base_path: str):
 
 
 if __name__ == "__main__":
-
     base_path="./data/pdf2"
     main(base_path)
 

@@ -3,7 +3,7 @@ from pathlib import Path
 from rapid_table import RapidTable, VisTable
 from rapidocr_onnxruntime import RapidOCR
 
-table_engine = RapidTable()
+table_engine = RapidTable(model_path='./model/ch_ppstructure_mobile_v2_SLANet.onnx')
 ocr_engine = RapidOCR()
 viser = VisTable()
 
