@@ -1,7 +1,7 @@
 import json
 import re
 import os
-from html_md import html_table_to_md
+from html_md import html_to_markdown
 from typing import Dict, List
 from markdownify import markdownify as md
 from rapidocr_onnxruntime import RapidOCR

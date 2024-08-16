@@ -20,13 +20,10 @@ def html_to_markdown(html_content):
     return '\n'.join(markdown)
 
 if __name__ == '__main__':
-    # Read HTML content from file
     with open('table1.html', 'r', encoding='utf-8') as file:
         html_content = file.read()
 
-    # Convert HTML to Markdown
     markdown_content = html_to_markdown(html_content)
 
-    # Write Markdown content to file
     with open('table.md', 'w', encoding='utf-8') as file:
         file.write(markdown_content)
