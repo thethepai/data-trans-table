@@ -10,33 +10,27 @@ from rapid_table import RapidTable
 table_engine = RapidTable()
 ocr_engine = RapidOCR()
 
-
 def read_markdown_file(file_path: str) -> str:
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.read()
-
 
 def write_markdown_file(file_path: str, content: str):
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(content)
 
-
 def read_json_file(file_path: str) -> List[Dict]:
     with open(file_path, 'r', encoding='utf-8') as file:
         return json.load(file)
-
 
 def perform_ocr(img_path: str) -> str:
     ocr_result, _ = ocr_engine(img_path)
     table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)
     return md(table_html_str)
 
-
 def replace_image_with_ocr_content(markdown_content: str, image_path: str, ocr_content: str) -> str:
     # 这里假设图片在Markdown中的格式是 ![alt text](image_path)
     image_pattern = f"!\\[.*?\\]\\({re.escape(image_path)}\\)"
     return re.sub(image_pattern, ocr_content, markdown_content)
-
 
 def find_markdown_file(base_path: str) -> str:
     auto_folder = os.path.join(base_path, 'auto')
@@ -44,7 +38,6 @@ def find_markdown_file(base_path: str) -> str:
         if file.endswith('.md'):
             return os.path.join(auto_folder, file)
     return None
-
 
 def main(base_path: str):
     # 查找Markdown文件
@@ -54,8 +47,6 @@ def main(base_path: str):
         return
 
     # 构建JSON文件路径
-    markdown_filename = os.path.basename(markdown_file_path)
-    #json_filename = f"{os.path.splitext(markdown_filename)[0]}_content_list.json"
     json_filename="middle.json"
     json_file_path = os.path.join(base_path, "auto", json_filename)
 
@@ -73,6 +64,7 @@ def main(base_path: str):
     json_data_tables=[a[0] for a in json_data_tables if len(a)>0]
     json_data_tables=[block for a in json_data_tables for block in a['blocks']]
     json_data_tables=[a["lines"][0]['spans'][0] for a in json_data_tables if len(a['lines'])>0]
+    print(json_data_tables)
     # 计算需要OCR处理的项目数量
     total_items = sum(1 for item in json_data_tables if item['type'] == 'table' and 'image_path' in item)
 

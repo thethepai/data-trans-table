@@ -1,12 +1,7 @@
 from pathlib import Path
-import os
-from rapid_table import RapidTable
+
 from rapid_table import RapidTable, VisTable
 from rapidocr_onnxruntime import RapidOCR
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(script_dir)
-print(script_dir)
 
 table_engine = RapidTable()
 ocr_engine = RapidOCR()
