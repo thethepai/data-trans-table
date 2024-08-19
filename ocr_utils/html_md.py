@@ -40,6 +40,11 @@ def generate_md_table(cell_data):
             
             col_idx += colspan
         
+        # Decrease rowspan tracker for new row from col_idx to the end
+        for i in range(col_idx, max_cols):
+            if rowspan_tracker[i] > 0:
+                rowspan_tracker[i] -= 1
+        
         md_table.append('| ' + ' | '.join(md_row) + ' |')
     
     return '\n'.join(md_table)
