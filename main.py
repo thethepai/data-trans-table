@@ -85,7 +85,7 @@ class MainProcessor:
                 if os.path.exists(img_path):
                     ocr_count += 1
                     table_html_str = self.ocr_processor.perform_ocr(img_path)
-                    ocr_content = self.ocr_processor.convert_html_to_markdown(table_html_str)
+                    ocr_content = md(table_html_str)
                     markdown_content = MarkdownUpdater.replace_image_with_ocr_content(markdown_content, "images/" + item['image_path'], ocr_content)
                     print(f"OCR 进度: {ocr_count}/{total_items}")
                 else:
