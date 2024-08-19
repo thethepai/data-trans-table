@@ -3,6 +3,7 @@ import re
 import os
 from typing import Dict, List
 from markdownify import markdownify as md
+from ocr_utils.table_tools2 import TableProcessorFactory
 from rapidocr_onnxruntime import RapidOCR
 from rapid_table import RapidTable
 
@@ -46,7 +47,7 @@ class MarkdownUpdater:
 class MainProcessor:
     def __init__(self, base_path: str):
         self.base_path = base_path
-        self.ocr_processor = OCRProcessor(RapidOCR(), RapidTable(model_path='./model/ch_ppstructure_mobile_v2_SLANet.onnx'))
+        self.ocr_processor = TableProcessorFactory.create_processor(model_path='./model/ch_ppstructure_mobile_v2_SLANet.onnx', save_dir="./inference_results/")
 
     def find_markdown_file(self) -> str:
         auto_folder = os.path.join(self.base_path, 'auto')
@@ -84,8 +85,8 @@ class MainProcessor:
                 img_path = os.path.join(self.base_path, 'auto/images', item['image_path'])
                 if os.path.exists(img_path):
                     ocr_count += 1
-                    table_html_str = self.ocr_processor.perform_ocr(img_path)
-                    ocr_content = md(table_html_str)
+                    table_html_str, table_cell_bboxes = self.ocr_processor.process_image(img_path)
+                    ocr_content = md(table_html_str) # TODO: need improvement!
                     markdown_content = MarkdownUpdater.replace_image_with_ocr_content(markdown_content, "images/" + item['image_path'], ocr_content)
                     print(f"OCR 进度: {ocr_count}/{total_items}")
                 else:

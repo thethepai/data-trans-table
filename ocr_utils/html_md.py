@@ -1,29 +1,85 @@
 from bs4 import BeautifulSoup
 
-def html_to_markdown(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
+def parse_html_table(html):
+    soup = BeautifulSoup(html, 'html.parser')
     table = soup.find('table')
-    markdown = []
+    
+    cell_data = []
+    for row_idx, row in enumerate(table.find_all('tr')):
+        row_data = []
+        for cell in row.find_all(['td', 'th']):
+            cell_text = cell.get_text(strip=True)
+            rowspan = int(cell.get('rowspan', 1))
+            colspan = int(cell.get('colspan', 1))
+            row_data.append((cell_text, rowspan, colspan, row_idx))
+        cell_data.append(row_data)
+    
+    return cell_data
 
-    for row in table.find_all('tr'):
-        cells = row.find_all(['td', 'th'])
-        row_data = [cell.get_text(strip=True) for cell in cells]
-        markdown.append('| ' + ' | '.join(row_data) + ' |')
+def generate_md_table(cell_data):
+    md_table = []
+    max_cols = max(sum(cell[2] for cell in row) for row in cell_data)
+    
+    # Initialize a list to keep track of rowspan cells
+    rowspan_tracker = [0] * max_cols
+    
+    for row in cell_data:
+        md_row = [''] * max_cols
+        col_idx = 0
+        for cell_text, rowspan, colspan, row_idx in row:
+            # Skip columns that are occupied by rowspan from previous rows
+            while col_idx < max_cols and rowspan_tracker[col_idx] > 0:
+                rowspan_tracker[col_idx] -= 1
+                col_idx += 1
+            
+            for i in range(colspan):
+                if col_idx + i < max_cols:
+                    md_row[col_idx + i] = cell_text if i == 0 else ''
+                    if rowspan > 1:
+                        rowspan_tracker[col_idx + i] = rowspan - 1
+            
+            col_idx += colspan
+        
+        md_table.append('| ' + ' | '.join(md_row) + ' |')
+    
+    return '\n'.join(md_table)
 
-    # Add header separator for markdown table
-    if markdown:
-        header = markdown[0]
-        num_columns = len(header.split('|')) - 2  # Subtract 2 for the leading and trailing '|'
-        separator = '| ' + ' | '.join(['---'] * num_columns) + ' |'
-        markdown.insert(1, separator)
+html_string = """
+<html>
+<body>
+    <table>
+        <tr>
+            <td rowspan="2">项目</td>
+            <td rowspan="2">年初至本报告期末 2022年1月1日- 2022年9月30日</td>
+            <td colspan="2">上年同期 2021年1月1日-2021年9月30日</td>
+        </tr>
+        <tr>
+            <td>调整后</td>
+            <td>调整前</td>
+        </tr>
+        <tr>
+            <td rowspan="2">归属于上市公司股 东的净利润</td>
+            <td>盈利：约人民币193 百万元</td>
+            <td rowspan="2">盈利：人民币7,537 百万元</td>
+            <td rowspan="2">盈利：人民币7,489 百万元</td>
+        </tr>
+        <tr>
+            <td>比上年同期 (调整后) 下降：约97.44%</td>
+        </tr>
+        <tr>
+            <td rowspan="2">归属于上市公司股 东的扣除非经常性 损益后的净利润</td>
+            <td>盈利：约人民币101 百万元</td>
+            <td rowspan="2">盈利：人民币7,565 百万元</td>
+            <td rowspan="2">盈利：人民币7,565 百万元</td>
+        </tr>
+        <tr>
+            <td>比上年同期 (调整后) 下降：约98.66%</td>
+        </tr>
+    </table>
+</body>
+</html>
+"""
 
-    return '\n'.join(markdown)
-
-if __name__ == '__main__':
-    with open('table1.html', 'r', encoding='utf-8') as file:
-        html_content = file.read()
-
-    markdown_content = html_to_markdown(html_content)
-
-    with open('table.md', 'w', encoding='utf-8') as file:
-        file.write(markdown_content)
+cell_data = parse_html_table(html_string)
+md_output = generate_md_table(cell_data)
+print(md_output)
