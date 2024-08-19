@@ -21,7 +21,7 @@ class TableProcessor:
         self.viser(img_path, table_html_str, save_html_path, table_cell_bboxes, save_drawed_path)
         print(table_html_str)
 
-# 使用示例
+# example
 if __name__ == "__main__":
     model_path = './model/ch_ppstructure_mobile_v2_SLANet.onnx'
     save_dir = "./inference_results/"
