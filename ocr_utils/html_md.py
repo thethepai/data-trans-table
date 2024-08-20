@@ -61,6 +61,21 @@ class HTMLTableParser:
 def main():
     html_string = """
     <html>
+    <style>
+        td {
+            border-left: 1px solid;
+            border-bottom: 1px solid;
+        }
+
+        table,
+        th {
+            border-top: 1px solid;
+            font-size: 10px;
+            border-collapse: collapse;
+            border-right: 1px solid;
+        }
+    </style>
+
     <body>
         <table>
             <tr>
@@ -90,11 +105,17 @@ def main():
             <tr>
                 <td>比上年同期 (调整后) 下降：约98.66%</td>
             </tr>
+            <tr>
+                <td>基本每股收益</td>
+                <td>盈利：约人民币0.021 元/股</td>
+                <td>盈利：人民币0.801 元/股</td>
+                <td>盈利：人民币0.796 元/股</td>
+            </tr>
         </table>
     </body>
+
     </html>
     """
-
     parser = HTMLTableParser(html_string)
     md_output = parser.convert_html_to_md()
     print(md_output)
