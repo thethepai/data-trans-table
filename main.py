@@ -2,7 +2,7 @@ import json
 import re
 import os
 from typing import Dict, List
-from markdownify import markdownify as md
+from ocr_utils.html_md import HTMLTableParser
 from ocr_utils.table_tools import TableProcessorFactory
 
 class MarkdownFileHandler:
@@ -21,20 +21,6 @@ class JsonFileHandler:
     def read_json_file(file_path: str) -> List[Dict]:
         with open(file_path, 'r', encoding='utf-8') as file:
             return json.load(file)
-
-class OCRProcessor:
-    def __init__(self, ocr_engine, table_engine):
-        self.ocr_engine = ocr_engine
-        self.table_engine = table_engine
-
-    def perform_ocr(self, img_path: str) -> str:
-        ocr_result, _ = self.ocr_engine(img_path)
-        table_html_str, table_cell_bboxes, elapse = self.table_engine(img_path, ocr_result)
-        print(table_html_str)
-        return table_html_str
-
-    def convert_html_to_markdown(self, html_content: str) -> str:
-        return md(html_content)
 
 class MarkdownUpdater:
     @staticmethod
@@ -84,7 +70,9 @@ class MainProcessor:
                 if os.path.exists(img_path):
                     ocr_count += 1
                     table_html_str, table_cell_bboxes = self.ocr_processor.process_image(img_path)
-                    ocr_content = md(table_html_str) # TODO: need improvement!
+                    converter = HTMLTableParser(table_html_str)
+                    ocr_content = converter.convert_html_to_md() # TODO: need improvement!
+                    # ocr_content = md(table_html_str)
                     markdown_content = MarkdownUpdater.replace_image_with_ocr_content(markdown_content, "images/" + item['image_path'], ocr_content)
                     print(f"OCR 进度: {ocr_count}/{total_items}")
                 else:
