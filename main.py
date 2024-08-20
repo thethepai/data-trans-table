@@ -59,8 +59,10 @@ class MainProcessor:
         json_data_tables = [a[0] for a in json_data_tables if len(a) > 0]
         json_data_tables = [block for a in json_data_tables for block in a['blocks']]
         json_data_tables = [a["lines"][0]['spans'][0] for a in json_data_tables if len(a['lines']) > 0]
+        print(json_data_tables)
 
         total_items = sum(1 for item in json_data_tables if item['type'] == 'table' and 'image_path' in item)
+        print(f"共找到{total_items}张表格")
         ocr_count = 0
 
         for item in json_data_tables:
