@@ -7,12 +7,12 @@ table_engine = RapidTable(model_path='./model/ch_ppstructure_mobile_v2_SLANet.on
 ocr_engine = RapidOCR()
 viser = VisTable()
 
-img_path = './data/table-image.jpg'
+img_path = '../data/table-image.jpg'
 
 ocr_result, _ = ocr_engine(img_path)
 table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)
 
-save_dir = Path("./inference_results/")
+save_dir = Path("../inference_results/")
 save_dir.mkdir(parents=True, exist_ok=True)
 
 save_html_path = save_dir / f"{Path(img_path).stem}.html"
