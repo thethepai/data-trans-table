@@ -3,9 +3,7 @@ import re
 import os
 from typing import Dict, List
 from markdownify import markdownify as md
-from ocr_utils.table_tools2 import TableProcessorFactory
-from rapidocr_onnxruntime import RapidOCR
-from rapid_table import RapidTable
+from ocr_utils.table_tools import TableProcessorFactory
 
 class MarkdownFileHandler:
     @staticmethod
