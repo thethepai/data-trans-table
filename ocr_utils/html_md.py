@@ -39,7 +39,7 @@ class HTMLTableParser:
                 
                 for i in range(colspan):
                     if col_idx + i < max_cols:
-                        md_row[col_idx + i] = cell_text if i == 0 else ''
+                        md_row[col_idx + i] = cell_text # if i == 0 else ''
                         if rowspan > 1:
                             rowspan_tracker[col_idx + i] = rowspan - 1
                 

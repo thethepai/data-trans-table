@@ -83,6 +83,6 @@ class MainProcessor:
         print(f"处理完成，已更新 {markdown_file_path} 文件。")
 
 if __name__ == "__main__":
-    base_path = "./data/pdf1"
+    base_path = "./data/pdf2"
     processor = MainProcessor(base_path)
     processor.process()
